@@ -140,7 +140,8 @@ namespace EasyNetQ
                 cts.Token
             ).ConfigureAwait(false);
 
-            foreach (var topic in subscriptionConfiguration.Topics.DefaultIfEmpty("#"))
+            var defaultBindingKey = exchange.Type == ExchangeType.Topic ? "#" : string.Empty;
+            foreach (var topic in subscriptionConfiguration.Topics.DefaultIfEmpty(defaultBindingKey))
                 await advancedBus.BindAsync(exchange, queue, topic, cts.Token).ConfigureAwait(false);
 
             var consumerCancellation = advancedBus.Consume<T>(
